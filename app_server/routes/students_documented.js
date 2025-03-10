@@ -134,27 +134,35 @@ router.get('/', function(req, res, next) {
  *               $ref: '#/components/schemas/Estudiante'
  *       400:
  *         description: Error en la solicitud
- */router.post('/', function(req, res, next) {
+ */
+router.post('/', function(req, res, next) {
   console.log("Status: " + req.statusCode);
   console.log("Body: " + JSON.stringify(req.body));
   
-  // Lo primero, realizamos la validación
+  // Verificar si el cuerpo contiene el campo 'asignaturas'
+  if ('asignaturas' in req.body) {
+    return res.status(400).json({ error: "No se permite establecer asignaturas al crear un estudiante." });
+  }
+
+  // Validación con AJV
   const validate = ajv.compile(schemaEstudiante);
   const valid = validate(req.body);
 
   if (!valid) {
     console.log(validate.errors);
-    res.status(400).send({ errors: validate.errors });
-    return;
+    return res.status(400).json({ errors: validate.errors });
   }
 
-  const estudianteConId = { id: generarId(), ...req.body };
-  estudianteConId.fecha_creacion = new Date().toISOString();
+  const estudianteConId = { 
+    id: generarId(), 
+    ...req.body, 
+    fecha_creacion: new Date().toISOString() 
+  };
 
   data.estudiantes.push(estudianteConId);
   data.count = data.estudiantes.length;
 
-  res.status(201).send(JSON.stringify(data));
+  res.status(201).json(estudianteConId);
 });
 
 /**
@@ -296,6 +304,133 @@ router.get('/', function(req, res, next) {
     res.send('Estudiante actualizado con éxito');
   } else {
     res.status(404).send('Estudiante no encontrado');
+  }
+});
+
+// METODOS PUT PARA MODIFICAR LAS ASIGNATURAS DE UN ESTUDIANTE
+/**
+ * @swagger
+ * /api/students_doc/{id}/subjects:
+ *   post:
+ *     summary: Actualiza las asignaturas de un estudiante por su ID
+ *     description: Actualiza las asignaturas del estudiante correspondiente al ID proporcionado con la información suministrada en el cuerpo de la solicitud. Se debe proporcionar tanto el campo de 'nombre' como el de 'calificacion'.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: El ID del estudiante a actualizar.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 example: matematicas
+ *               calificacion:
+ *                 type: number
+ *                 format: double
+ *                 example: 5.5
+ *             minProperties: 2
+ *             additionalProperties: false
+ *     responses:
+ *       200:
+ *         description: Estudiante actualizado con éxito.
+ *       400:
+ *         description: El cuerpo de la solicitud no contiene ninguna propiedad válida para actualizar.
+ *       404:
+ *         description: Estudiante no encontrado.
+ */
+router.post('/:id/subjects', (req, res) => {
+  console.log("Status: " + req.statusCode);
+  const idParaActualizar = req.params.id;
+  console.log(`Recurso solicitado con ID: ${idParaActualizar}`);
+
+  const { nombre, calificacion } = req.body;
+
+  // Validar que el cuerpo de la solicitud contenga ambos campos
+  if (!nombre || calificacion === undefined) {
+    return res.status(400).json({ error: "Debe proporcionar 'nombre' y 'calificacion'." });
+  }
+
+  // Encuentra el estudiante por ID
+  const estudiante = data.estudiantes.find(est => est.id === idParaActualizar);
+
+  if (!estudiante) {
+    return res.status(404).json({ error: "Estudiante no encontrado." });
+  }
+
+  // Si el estudiante existe, aseguramos que `asignaturas` es un array y añadimos la nueva asignatura
+  if (!Array.isArray(estudiante.asignaturas)) {
+    estudiante.asignaturas = [];
+  }
+
+  // Agregamos la nueva asignatura al array
+  estudiante.asignaturas.push({ nombre, calificacion });
+
+  res.json({ mensaje: "Asignatura añadida con éxito.", asignaturas: estudiante.asignaturas });
+});
+
+// METODO GET PARA SUBJECTS
+/**
+ * @swagger
+ * /api/students_doc/{id}/subjects:
+ *   get:
+ *     summary: Obtiene las asignaturas de un estudiante por su ID
+ *     description: devuelve un json con la lista de asignaturas, tanto el campo de 'nombre' como el de 'calificacion'.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: El ID del estudiante a buscar.
+ *     responses:
+ *       200:
+ *         description: Estudiante matricuadoo encontrado con éxito.
+ *         content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 example: matematicas
+ *               calificacion:
+ *                 type: number
+ *                 format: double
+ *                 example: 5.5
+ *       400:
+ *         description: El cuerpo de la solicitud no contiene ninguna propiedad válida para actualizar.
+ *       404:
+ *         description: Estudiante no encontrado.
+ */
+router.get('/:id/subjects', function(req, res, next) {
+  console.log("Status: " + req.statusCode);
+  const idBuscado = req.params.id;
+  console.log(`Recurso solicitado con ID: ${idBuscado}`);
+  
+  // Busca en el array el estudiante con el ID correspondiente
+  const estudiante = data.estudiantes.find(est => est.id === idBuscado);
+
+  if (estudiante) {
+    if (!estudiante.asignaturas || estudiante.asignaturas.length === 0) {
+      return res.status(404).json({ error: "El estudiante no tiene asignaturas registradas" });
+    }
+
+    // Si asignaturas es un array, lo devolvemos tal cual
+    res.json({
+      asignaturas: estudiante.asignaturas.map(asignatura => ({
+        nombre: asignatura.nombre,
+        calificacion: asignatura.calificacion
+      }))
+    });
+  } else {
+    res.status(404).json({ error: 'Estudiante no encontrado' });
   }
 });
 
