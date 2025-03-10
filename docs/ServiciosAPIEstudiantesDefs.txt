@@ -1,0 +1,66 @@
+GET /api/estudiantes
+	Obtener todos los estudiantes
+	GET http://myapp.com/api/students
+	Respuesta:
+	{
+		"count": 1,
+		"estudiantes": [
+			{
+       			id: "ff6s728h72892a918",
+       			nombre: “John”,
+       			apellidos: “Doe”,
+       			nip: 783265,
+       			email: "783265@unizar.es",
+       			fecha_creacion: "2025/02/27"
+  			}
+		]
+	}
+
+GET /api/estudiantes/ff6s728h72892a918
+			{
+       			id: "ff6s728h72892a918",
+       			nombre: “John”,
+       			apellidos: “Doe”,
+       			nip: 783265,
+       			email: "783265@unizar.es",
+       			fecha_creacion: "2024/02/21"
+  			}
+
+POST /api/estudiantes
+	Request:
+			{
+       			"nombre": "John",
+       			"apellidos": "Doe",
+       			"nip": 783265,
+       			"email": "783265@unizar.es"
+  			}
+  	Response:
+  		Código 201 (Created)
+			{
+       			id: "ff6s728h72892a918",
+       			nombre: “John”,
+       			apellidos: “Doe”,
+       			nip: 783265,
+       			email: "783265@unizar.es",
+       			fecha_creacion: "2025/02/28"
+  			}
+
+PUT /api/estudiantes/ff6s728h72892a918
+	Request:
+			{
+       			"nombre": "Juan"
+  			}
+  	Response:
+  		Código 200 (OK)
+			{
+       			id: "ff6s728h72892a918",
+       			nombre: "Juan",
+       			apellidos: “Doe”,
+       			nip: 783265,
+       			email: "783265@unizar.es",
+       			fecha_creacion: "2024/02/21"
+  			}  		
+
+DELETE /api/estudiantes/ff6s728h72892a918
+	Response: 
+		Código 204 (deleted)
