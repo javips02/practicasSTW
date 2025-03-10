@@ -4,6 +4,7 @@ var router = express.Router();
 // Para la validación del JSON Schema
 const Ajv = require('ajv');
 const ajv = new Ajv(); // Opciones por defecto
+// https://swagger.io/docs/specification/v3_0/media-types/
 
 /**
  * @swagger
