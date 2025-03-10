@@ -5,6 +5,7 @@ var router = express.Router();
 const Ajv = require('ajv');
 const ajv = new Ajv(); // Opciones por defecto
 // https://swagger.io/docs/specification/v3_0/media-types/
+// https://swagger.io/docs/specification/v3_0/data-models/data-types/#numbers 
 
 /**
  * @swagger
@@ -29,6 +30,14 @@ const ajv = new Ajv(); // Opciones por defecto
  *           type: string
  *           description: La dirección de correo electrónico del estudiante
  *           example: 123456@unizar.es
+ *         asignaturas:
+ *           type: object
+ *           properties:
+ *             nombre:
+ *               type: string
+ *             calificacion:
+ *               type: number
+ *               format: double
  *       required:
  *         - nombre
  *         - apellidos
@@ -43,6 +52,10 @@ const ajv = new Ajv(); // Opciones por defecto
     apellidos: { type: "string" },
     nip: { type: "number" },
     email: { type: "string" },
+    asignaturas: {
+      nombre: { type: "string"},
+      calificacion: { type: Number}
+    },
   },
   required: ["nombre", "apellidos", "nip", "email"], // Propiedades requeridas
   additionalProperties: false // No permite propiedades adicionales
