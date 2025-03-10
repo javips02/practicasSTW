@@ -73,7 +73,7 @@ function generarId() {
 
 /**
  * @swagger
- * /api/students:
+ * /api/students_doc:
  *   get:
  *     summary: Devuelve una lista de estudiantes
  *     responses:
@@ -98,6 +98,14 @@ function generarId() {
  *                   email:
  *                     type: string
  *                     description: Email del estudiante.
+ *                   asignaturas:
+ *                     type: object
+ *                     properties:
+ *                       nombre:
+ *                         type: string
+ *                       calificacion:
+ *                         type: number
+ *                         format: double
  */
 router.get('/', function(req, res, next) {
   res.send(JSON.stringify(data));
