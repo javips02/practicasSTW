@@ -53,8 +53,11 @@ const ajv = new Ajv(); // Opciones por defecto
     nip: { type: "number" },
     email: { type: "string" },
     asignaturas: {
-      nombre: { type: "string"},
-      calificacion: { type: Number}
+      type: "object",
+      properties: {
+        nombre: { type: "string" },
+        calificacion: { type: "number" }
+      }
     },
   },
   required: ["nombre", "apellidos", "nip", "email"], // Propiedades requeridas
