@@ -113,7 +113,7 @@ router.get('/', function(req, res, next) {
 
 /**
  * @swagger
- * /api/students:
+ * /api/students_doc:
  *   post:
  *     summary: Añade un nuevo estudiante
  *     requestBody:
@@ -156,7 +156,7 @@ router.get('/', function(req, res, next) {
 
 /**
  * @swagger
- * /api/students/{id}:
+ * /api/students_doc/{id}:
  *   get:
  *     summary: Obtiene un estudiante por su ID
  *     description: Devuelve el estudiante correspondiente al ID proporcionado.
@@ -194,7 +194,7 @@ router.get('/', function(req, res, next) {
 
 /**
  * @swagger
- * /api/students/{id}:
+ * /api/students_doc/{id}:
  *   delete:
  *     summary: Elimina un estudiante por su ID
  *     description: Elimina el estudiante correspondiente al ID proporcionado si existe.
@@ -231,7 +231,7 @@ router.get('/', function(req, res, next) {
 
 /**
  * @swagger
- * /api/students/{id}:
+ * /api/students_doc/{id}:
  *   put:
  *     summary: Actualiza un estudiante por su ID
  *     description: Actualiza los datos del estudiante correspondiente al ID proporcionado con la información suministrada en el cuerpo de la solicitud. Se debe proporcionar al menos uno de los campos 'nombre', 'apellidos', 'nip', o 'email'.
